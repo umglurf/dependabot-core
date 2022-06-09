@@ -185,10 +185,7 @@ module Dependabot
           details.each do |_, dep_details|
             next unless dep_details.is_a?(Hash)
             next unless dep_details["path"]
-
-            if submodule_paths.include?(Pathname.new(dep_details["path"]).cleanpath)
-              submodule_paths.find { |p| p == Pathname.new(dep_details["path"]).cleanpath }
-            end
+            next if submodule_paths.include?(Pathname.new(dep_details["path"]).cleanpath)
 
             paths << File.join(dep_details["path"], "Cargo.toml")
           end
