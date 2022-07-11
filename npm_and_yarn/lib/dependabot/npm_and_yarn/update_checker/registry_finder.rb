@@ -53,13 +53,9 @@ module Dependabot
         def first_registry_with_dependency_details
           @first_registry_with_dependency_details ||=
             known_registries.find do |details|
-              response = Excon.get(
-                "https://#{details['registry'].gsub(%r{/+$}, '')}/"\
-                "#{escaped_dependency_name}",
-                idempotent: true,
-                **SharedHelpers.excon_defaults(
-                  headers: auth_header_for(details["token"])
-                )
+              response = Dependabot::RegistryClient.get(
+                url: "https://#{details['registry'].gsub(%r{/+$}, '')}/#{escaped_dependency_name}",
+                headers: auth_header_for(details["token"])
               )
               response.status < 400 && JSON.parse(response.body)
             rescue Excon::Error::Timeout,
